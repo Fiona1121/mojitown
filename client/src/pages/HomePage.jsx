@@ -1,71 +1,94 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import PixelButton from '../components/UI/PixelButton';
-import backgroundImage from '../assets/HomePage/Landing_page.png';
+import React from 'react';
+import { Link } from 'react-router-dom';
+import backgroundVideo from '../assets/HomePage/HomeBG.mp4';
 
-// HomePage component with full-screen background image and pixel art style
 const HomePage = () => {
-  const navigate = useNavigate();
-  const [titleScale, setTitleScale] = useState(1);
-  const [buttonVisible, setButtonVisible] = useState(false);
-  
-  // Simple animation for the title
-  useEffect(() => {
-    // Title animation
-    const interval = setInterval(() => {
-      setTitleScale(prev => prev === 1 ? 1.02 : 1);
-    }, 800);
-    
-    // Delayed button appearance
-    setTimeout(() => {
-      setButtonVisible(true);
-    }, 500);
-    
-    return () => clearInterval(interval);
-  }, []);
-  
   return (
-    <div 
-      className="fixed top-0 left-0 w-screen h-screen flex flex-col items-center justify-center overflow-hidden"
-      style={{
-        backgroundImage: `url(${backgroundImage})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat',
-        width: '100vw',
-        height: '100vh'
-      }}
-    >
-      {/* Title */}
-      <div 
-        className="relative mb-20 z-10"
-        style={{ 
-          transform: `scale(${titleScale})`,
-          transition: 'transform 0.5s ease-in-out'
+    <div className="fullscreen" style={{ position: 'relative', overflow: 'hidden' }}>
+      <video
+        autoPlay
+        loop
+        muted
+        playsInline
+        style={{
+          position: 'absolute',
+          width: '100%',
+          height: '100%',
+          objectFit: 'cover',
+          zIndex: -1
         }}
       >
+        <source src={backgroundVideo} type="video/mp4" />
+      </video>
+
+      <div style={{
+        position: 'relative',
+        zIndex: 1,
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '100vh',
+        textAlign: 'center'
+      }}>
         <h1 
-          className="text-6xl text-white tracking-widest pixel-text"
-          style={{ 
-            textShadow: '4px 4px 0 rgba(0,0,0,0.7)'
+          className="title"
+          style={{
+            textAlign: 'center',
+            fontSize: 110,
+            color: 'white',
+            fontWeight: '500',
+            textShadow: '3px 3px 0 #000, -3px -3px 0 #000, 3px -3px 0 #000, 10px 10px 0 #000, -3px 6px 0 #000',
+            fontFamily: 'Silkscreen'
           }}
         >
           MOJITOWN
         </h1>
-      </div>
-      
-      {/* Start Button */}
-      <div 
-        className={`relative z-10 transition-opacity duration-500 ${
-          buttonVisible ? 'opacity-100' : 'opacity-0'
-        }`}
-      >
-        <PixelButton 
-          onClick={() => navigate('/create')}
-          className="text-2xl px-12 py-3 bg-yellow-300 rounded-full hover:bg-yellow-400 border-4 border-black"
+        
+        <Link 
+          to="/create" 
+          style={{
+            backgroundColor: '#FFD700',
+            color: 'black',
+            border: '2px solid black',
+            padding: '4px 32px',
+            borderRadius: '5px',
+            fontFamily: 'Silkscreen',
+            textShadow: '2px 1px 0 #E8B500',
+            fontSize: '20px',
+            textDecoration: 'none',
+            textTransform: 'uppercase',
+            display: 'inline-block',
+            boxShadow: '4px 4px 0 #000',
+            transform: 'translateY(0)',
+            transition: 'all 0.2s ease',
+            marginTop: '30px',
+            cursor: 'pointer'
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.backgroundColor = '#FFD700';
+            e.currentTarget.style.transform = 'scale(1.1)';
+            e.currentTarget.style.boxShadow = '4px 4px 0 #000';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.backgroundColor = '#FFD700';
+            e.currentTarget.style.transform = 'scale(1)';
+            e.currentTarget.style.boxShadow = '4px 4px 0 #000';
+          }}
+          onMouseDown={(e) => {
+            e.currentTarget.style.transform = 'translateY(4px) scale(0.95)';
+            e.currentTarget.style.boxShadow = '0px 0px 0 #000';
+          }}
+          onMouseUp={(e) => {
+            e.currentTarget.style.transform = 'scale(1.1)';
+            e.currentTarget.style.boxShadow = '4px 4px 0 #000';
+            e.currentTarget.style.backgroundColor = '#FFD700';
+            e.currentTarget.style.textShadow = '2px 1px 0 #E8B500';
+          }}
+          className="start-button"
         >
-          START
-        </PixelButton>
+          Start
+        </Link>
       </div>
     </div>
   );

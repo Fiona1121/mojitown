@@ -1,18 +1,19 @@
 import React from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import HomePage from './pages/HomePage';
 import CreateCharacter from './pages/CreateCharacter';
 import Village from './pages/Village';
+import './index.css';
 
 function App() {
   return (
-    <BrowserRouter>
+    <Router>
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/create" element={<CreateCharacter />} />
         <Route path="/village" element={<Village />} />
       </Routes>
-    </BrowserRouter>
+    </Router>
   );
 }
 
