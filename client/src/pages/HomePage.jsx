@@ -1,25 +1,22 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import backgroundVideo from '../assets/HomePage/HomeBG.mp4';
+import backgroundGif from '../assets/HomePage/HomeBG.gif';
 
 const HomePage = () => {
   return (
     <div className="fullscreen" style={{ position: 'relative', overflow: 'hidden' }}>
-      <video
-        autoPlay
-        loop
-        muted
-        playsInline
-        style={{
-          position: 'absolute',
-          width: '100%',
-          height: '100%',
-          objectFit: 'cover',
-          zIndex: -1
-        }}
-      >
-        <source src={backgroundVideo} type="video/mp4" />
-      </video>
+      <div style={{
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: '100%',
+        backgroundImage: `url(${backgroundGif})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+        zIndex: -1
+      }} />
 
       <div style={{
         position: 'relative',
