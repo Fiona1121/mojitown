@@ -1,0 +1,63 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Silkscreen&display=swap');
+
+@layer base {
+  html, body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    image-rendering: pixelated;
+  }
+}
+
+@layer components {
+  .pixel-text {
+    font-family: 'Silkscreen', cursive;
+    -webkit-font-smoothing: none;
+  }
+  
+  .pixel-border {
+    @apply border-4 border-black;
+    box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.7);
+  }
+  
+  .pixel-button {
+    @apply bg-yellow-300 border-4 border-black rounded-full px-8 py-3 text-black transition-all duration-100;
+    font-family: 'Silkscreen', cursive;
+    box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.7);
+  }
+  
+  .pixel-button:hover {
+    @apply bg-yellow-400 scale-105;
+  }
+  
+  .pixel-button:active {
+    @apply translate-y-1;
+    box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.7);
+  }
+  
+  .grass-pattern {
+    background-image: 
+      repeating-linear-gradient(
+        90deg, 
+        transparent, 
+        transparent 10px, 
+        rgba(255,255,255,0.1) 10px, 
+        rgba(255,255,255,0.1) 15px
+      );
+  }
+  
+  /* Cloud floating animation */
+  @keyframes float {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+    100% { transform: translateY(0px); }
+  }
+  
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+}
