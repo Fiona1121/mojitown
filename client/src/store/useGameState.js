@@ -8,8 +8,11 @@ const useGameState = create(
       // Character data
       character: {
         name: '',
-        emoji: '😀',
-        trait: 'friendly',
+        emoji: '🐱',
+        color: 'white',
+        birthday: '',
+        zodiac: '',
+        mbti: ''
       },
       
       // Game progress
@@ -97,8 +100,11 @@ const useGameState = create(
       resetGame: () => set({
         character: {
           name: '',
-          emoji: '😀',
-          trait: 'friendly',
+          emoji: '🐱',
+          color: 'white',
+          birthday: '',
+          zodiac: '',
+          mbti: ''
         },
         progress: {
           hasCreatedCharacter: false,

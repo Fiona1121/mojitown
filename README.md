@@ -40,6 +40,8 @@ This project explores how emotionally aware AI companions can support wellness a
 - Define personality traits (e.g., MBTI)
 - Assign professions and backstories
 - Customize appearance via emoji selection
+- **New:** Choose character color, birthday, and zodiac sign
+- **New:** Persistent character data across sessions
 
 #### AI Conversations
 - Personality-driven dialogue
@@ -66,7 +68,7 @@ This project explores how emotionally aware AI companions can support wellness a
 ## 🧰 Tech Stack
 
 - **Frontend**: React.js, Tailwind CSS
-- **State Management**: Custom hooks & context
+- **State Management**: Zustand with persistence
 - **Character AI**: Custom AI models for personality-driven dialogue
 - **Deployment**: [Platform to be determined]
 
