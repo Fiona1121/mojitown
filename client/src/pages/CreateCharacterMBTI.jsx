@@ -1,16 +1,31 @@
-import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import useGameState from '../store/useGameState';
 
 const CreateCharacterMBTI = () => {
   const navigate = useNavigate();
-  const updateCharacter = useGameState((state) => state.updateCharacter);
-  const character = useGameState((state) => state.character);
+  const location = useLocation();
+  const addCharacter = useGameState((state) => state.addCharacter);
 
-  // Redirect if no character info exists
-  React.useEffect(() => {
-    if (!character.name || !character.emoji) {
+  // Local state for the character being built, initialized from location state
+  const [character, setCharacter] = useState(null);
+
+  useEffect(() => {
+    if (location.state?.characterData) {
+      setCharacter(location.state.characterData);
+    } else {
+      // If no character data is passed, redirect to the first step
       navigate('/create');
+    }
+  }, [location.state, navigate]);
+
+  // Redirect if no character info exists (or hasn't been set yet)
+  // This useEffect can be simplified or adapted based on the above initialization
+  useEffect(() => {
+    // This check might be redundant if the above useEffect handles redirection robustly
+    if (!character?.name || !character?.emoji) {
+      // Consider if navigation is needed here or if initial state handling is sufficient
+      // navigate('/create'); 
     }
   }, [character, navigate]);
 
@@ -47,20 +62,26 @@ const CreateCharacterMBTI = () => {
   ];
 
   const handleMbtiSelect = (index, value) => {
+    if (!character) return; // Guard clause
     const currentMbti = (character.mbti || '').split('');
     while (currentMbti.length < 4) currentMbti.push('');
     currentMbti[index] = value;
     const newCharacter = { ...character, mbti: currentMbti.join('') };
-    updateCharacter(newCharacter);
+    setCharacter(newCharacter); // Update local state
+    // updateCharacter(newCharacter); // We will call addCharacter on submit
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    navigate('/village');
+    if (character && character.mbti && character.mbti.length === 4) {
+      addCharacter(character); // Add the complete character to the global state
+      navigate('/village');
+    }
   };
 
   const handleBack = () => {
-    navigate('/create');
+    // Pass the current character data back to the create page if user goes back
+    navigate('/create', { state: { characterData: character } });
   };
 
   // Background style with gradient
@@ -68,6 +89,11 @@ const CreateCharacterMBTI = () => {
     background: 'linear-gradient(to bottom, #87CEEB, #E0F7FA)',
     fontFamily: 'Silkscreen, cursive',
   };
+
+  // Conditional rendering for the form until character data is loaded
+  if (!character) {
+    return <div>Loading character data...</div>; // Or some other loading indicator
+  }
 
   return (
     <div className="fullscreen" style={backgroundStyle}>
