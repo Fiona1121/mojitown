@@ -39,7 +39,9 @@ const Village = () => {
         <VillageCharacter
           key={character.id || index}
           characterData={character}
-          initialXOffset={(index - (characters.length - 1) / 2) * 100}
+          initialXOffset={(index - (characters.length - 1) / 2) * 200}
+          allCharacters={characters}
+          myIndex={index}
         />
       ))}
 
