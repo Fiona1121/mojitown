@@ -6,14 +6,7 @@ const useGameState = create(
   persist(
     (set, get) => ({
       // Character data
-      character: {
-        name: '',
-        emoji: '🐱',
-        color: 'white',
-        birthday: '',
-        zodiac: '',
-        mbti: ''
-      },
+      characters: [],
       
       // Game progress
       progress: {
@@ -29,10 +22,10 @@ const useGameState = create(
       // Currency
       coins: 0,
       
-      // Update character
-      updateCharacter: (characterData) => 
+      // Add character to the list
+      addCharacter: (characterData) => 
         set((state) => ({ 
-          character: { ...state.character, ...characterData },
+          characters: [...state.characters, characterData],
           progress: { 
             ...state.progress, 
             hasCreatedCharacter: true 
@@ -98,14 +91,7 @@ const useGameState = create(
         
       // Reset game state (for testing or new game)
       resetGame: () => set({
-        character: {
-          name: '',
-          emoji: '🐱',
-          color: 'white',
-          birthday: '',
-          zodiac: '',
-          mbti: ''
-        },
+        characters: [],
         progress: {
           hasCreatedCharacter: false,
           unlockedLocations: ['Town Square'],

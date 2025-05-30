@@ -5,16 +5,15 @@ import CharacterPreview from '../components/CharacterPreview';
 
 const CreateCharacter = () => {
   const navigate = useNavigate();
-  const updateCharacter = useGameState((state) => state.updateCharacter);
-  const savedCharacter = useGameState((state) => state.character);
+  const addCharacter = useGameState((state) => state.addCharacter);
   
   const [character, setCharacter] = useState({
-    name: savedCharacter?.name || '',
-    emoji: savedCharacter?.emoji || '🐱',
-    color: savedCharacter?.color || 'white',
-    birthday: savedCharacter?.birthday || '',
-    zodiac: savedCharacter?.zodiac || '',
-    mbti: savedCharacter?.mbti || ''
+    name: '',
+    emoji: '🐱',
+    color: 'white',
+    birthday: '',
+    zodiac: '',
+    mbti: ''
   });
 
   // List of available emojis
@@ -109,11 +108,9 @@ const CreateCharacter = () => {
         zodiac: zodiacSign
       };
       setCharacter(newCharacter);
-      updateCharacter(newCharacter);
     } else {
       const newCharacter = { ...character, [field]: value };
       setCharacter(newCharacter);
-      updateCharacter(newCharacter);
     }
   };
 
@@ -125,8 +122,7 @@ const CreateCharacter = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Navigate to MBTI selection instead of village
-    navigate('/create-character/mbti');
+    navigate('/create-character/mbti', { state: { characterData: character } });
   };
 
   // Background style with gradient

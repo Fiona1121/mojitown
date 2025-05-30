@@ -42,6 +42,7 @@ This project explores how emotionally aware AI companions can support wellness a
 - Customize appearance via emoji selection
 - **New:** Choose character color, birthday, and zodiac sign
 - **New:** Persistent character data across sessions
+- **New:** Create and manage multiple Moji characters in your village.
 
 #### AI Conversations
 - Personality-driven dialogue
@@ -49,9 +50,16 @@ This project explores how emotionally aware AI companions can support wellness a
 - Emotionally supportive interactions
 
 #### Village Simulation
-- Watch Mojis interact organically
-- Observe daily routines and special events
-- Dynamic relationships between characters
+- Watch Mojis interact organically (future goal, current implementation focuses on individual Moji presence)
+- Observe daily routines and special events (future goal)
+- Dynamic relationships between characters (future goal)
+- **New: Dynamic Moji Presence & Movement:**
+    - Mojis now have an animated entry sequence (dropping, posing, then walking).
+    - Each Moji walks independently with a randomized initial direction (left/right).
+    - Mojis select one of four distinct vertical tracks in the grass area for each walking "round."
+    - Characters walk completely off-screen before turning around and re-entering on a new track.
+    - An "Add Another Moji" button allows for easy expansion of the village population.
+    - Overall character walk speed has been refined for a more natural pace.
 
 ### 🔮 Future Implementation (Post-June 6, 2025)
 

@@ -4,9 +4,9 @@ import backgroundGif from '../assets/HomePage/HomeBG.gif';
 import useGameState from '../store/useGameState';
 
 const HomePage = () => {
-  const character = useGameState((state) => state.character);
+  const characters = useGameState((state) => state.characters);
   const resetGame = useGameState((state) => state.resetGame);
-  const hasExistingCharacter = character.name && character.emoji;
+  const hasExistingCharacter = characters && characters.length > 0 && characters[0].name && characters[0].emoji;
 
   return (
     <div className="fullscreen" style={{ position: 'relative', overflow: 'hidden' }}>
