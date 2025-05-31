@@ -25,7 +25,14 @@ const useGameState = create(
       // Add character to the list
       addCharacter: (characterData) => 
         set((state) => ({ 
-          characters: [...state.characters, characterData],
+          characters: [
+            ...state.characters, 
+            { 
+              ...characterData, 
+              id: characterData.id || `char_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`, // Ensure ID and add flag
+              isNewlyAdded: true 
+            }
+          ],
           progress: { 
             ...state.progress, 
             hasCreatedCharacter: true 
@@ -101,6 +108,50 @@ const useGameState = create(
         inventory: [],
         coins: 0,
       }),
+
+      // New action to mark character as seen (animation played)
+      markCharacterAnimationPlayed: (characterId) =>
+        set((state) => ({
+          characters: state.characters.map(char =>
+            char.id === characterId 
+              ? { ...char, isNewlyAdded: false } 
+              : char
+          ),
+        })),
+
+      // Update character position for encounter detection
+      updateCharacterPosition: (characterId, position) =>
+        set((state) => ({
+          characters: state.characters.map(char =>
+            char.id === characterId 
+              ? { ...char, currentPosition: position } 
+              : char
+          ),
+        })),
+
+      // Start a conversation between two characters
+      startConversation: (character1Id, character2Id) =>
+        set((state) => ({
+          characters: state.characters.map(char => {
+            if (char.id === character1Id) {
+              return { ...char, conversationState: { isInConversation: true, partnerId: character2Id, role: 'initiator' } };
+            } else if (char.id === character2Id) {
+              return { ...char, conversationState: { isInConversation: true, partnerId: character1Id, role: 'responder' } };
+            }
+            return char;
+          }),
+        })),
+
+      // End conversation for both characters
+      endConversation: (character1Id, character2Id) =>
+        set((state) => ({
+          characters: state.characters.map(char => {
+            if (char.id === character1Id || char.id === character2Id) {
+              return { ...char, conversationState: null };
+            }
+            return char;
+          }),
+        })),
     }),
     {
       name: 'mojitown-storage', // localStorage key
