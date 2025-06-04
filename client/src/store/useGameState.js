@@ -22,6 +22,9 @@ const useGameState = create(
       // Currency
       coins: 0,
       
+      // Game state
+      conversations: [],
+      
       // Add character to the list
       addCharacter: (characterData) => 
         set((state) => ({ 
@@ -99,6 +102,7 @@ const useGameState = create(
       // Reset game state (for testing or new game)
       resetGame: () => set({
         characters: [],
+        conversations: [],
         progress: {
           hasCreatedCharacter: false,
           unlockedLocations: ['Town Square'],
@@ -130,17 +134,38 @@ const useGameState = create(
         })),
 
       // Start a conversation between two characters
-      startConversation: (character1Id, character2Id) =>
-        set((state) => ({
-          characters: state.characters.map(char => {
+      startConversation: (character1Id, character2Id, message1, message2) =>
+        set((state) => {
+          // Update characters' conversation state
+          const updatedCharacters = state.characters.map(char => {
             if (char.id === character1Id) {
               return { ...char, conversationState: { isInConversation: true, partnerId: character2Id, role: 'initiator' } };
             } else if (char.id === character2Id) {
               return { ...char, conversationState: { isInConversation: true, partnerId: character1Id, role: 'responder' } };
             }
             return char;
-          }),
-        })),
+          });
+
+          // Find character names
+          const char1 = state.characters.find(c => c.id === character1Id);
+          const char2 = state.characters.find(c => c.id === character2Id);
+
+          // Add conversation to history
+          const newConversation = {
+            character1Id,
+            character2Id,
+            character1Name: char1?.name || 'Unknown',
+            character2Name: char2?.name || 'Unknown',
+            message1,
+            message2,
+            timestamp: Date.now()
+          };
+
+          return {
+            characters: updatedCharacters,
+            conversations: [newConversation, ...state.conversations]
+          };
+        }),
 
       // End conversation for both characters
       endConversation: (character1Id, character2Id) =>

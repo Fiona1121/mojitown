@@ -79,8 +79,6 @@ const VillageCharacter = ({ characterData, style, initialXOffset = 0, allCharact
 
   // Effect to handle conversation state changes from global state
   useEffect(() => {
-    console.log('Conversation state changed for', id, ':', conversationState);
-    
     // Clear any existing conversation timeout
     if (conversationTimeoutRef.current) {
       clearTimeout(conversationTimeoutRef.current);
@@ -88,76 +86,64 @@ const VillageCharacter = ({ characterData, style, initialXOffset = 0, allCharact
     }
 
     if (conversationState?.isInConversation) {
-      console.log('Starting conversation for', id, 'as', conversationState.role);
       setIsWalking(false); // Stop walking when conversation starts
       
       if (conversationState.role === 'initiator') {
-        // Initiator says "Hello!" first
-        setSpeechBubble('Hello!');
+        // Find the conversation in global state
+        const currentConversation = useGameState.getState().conversations.find(
+          conv => conv.character1Id === id && conv.character2Id === conversationState.partnerId
+        );
+        
+        // Show the actual message from the conversation
+        setSpeechBubble(currentConversation?.message1 || '');
+        
         conversationTimeoutRef.current = setTimeout(() => {
           setSpeechBubble('');
           console.log('Initiator finished speaking:', id);
           
-          // Add partner to cooldown list for initiator
           if (conversationState.partnerId) {
             conversationCooldownRef.current.add(conversationState.partnerId);
-            console.log('Added', conversationState.partnerId, 'to cooldown for', id);
-            
-            // Remove from cooldown after 3 seconds
             setTimeout(() => {
               conversationCooldownRef.current.delete(conversationState.partnerId);
-              console.log('Removed', conversationState.partnerId, 'from cooldown for', id);
             }, 3000);
           }
         }, 1500);
       } else if (conversationState.role === 'responder') {
-        // Responder handles the entire conversation flow
-        // Wait 1.5s, say "Hi!", wait another 1.5s, then end conversation
+        // Find the conversation in global state
+        const currentConversation = useGameState.getState().conversations.find(
+          conv => conv.character2Id === id && conv.character1Id === conversationState.partnerId
+        );
+        
+        // Wait for initiator to finish, then show response
         conversationTimeoutRef.current = setTimeout(() => {
-          setSpeechBubble('Hi!');
-          console.log('Responder started speaking:', id);
+          setSpeechBubble(currentConversation?.message2 || '');
           
           conversationTimeoutRef.current = setTimeout(() => {
             setSpeechBubble('');
-            console.log('Responder finished, ending conversation:', id);
             
-            // Add partner to cooldown list
             if (conversationState.partnerId) {
               conversationCooldownRef.current.add(conversationState.partnerId);
-              console.log('Added', conversationState.partnerId, 'to cooldown for', id);
-              
-              // Remove from cooldown after 3 seconds
               setTimeout(() => {
                 conversationCooldownRef.current.delete(conversationState.partnerId);
-                console.log('Removed', conversationState.partnerId, 'from cooldown for', id);
               }, 3000);
             }
             
-            // End conversation - this is the crucial part
             if (id && conversationState.partnerId) {
-              console.log('Calling endGlobalConversation for:', id, 'and', conversationState.partnerId);
               endGlobalConversation(id, conversationState.partnerId);
-            } else {
-              console.log('Error: Missing id or partnerId for ending conversation');
             }
           }, 1500);
         }, 1500);
       }
     } else {
       // Conversation ended or never started
-      console.log('Conversation ended for', id, '- resuming walking');
       setSpeechBubble('');
       
-      // Resume walking based on character state
       const canWalk = 
-        (!isNewlyAdded && dropped) || // Existing character
-        (isNewlyAdded && dropped && currentPose === null); // New character finished animation
+        (!isNewlyAdded && dropped) || 
+        (isNewlyAdded && dropped && currentPose === null);
       
       if (canWalk) {
-        console.log('Resuming walking for', id);
         setIsWalking(true);
-      } else {
-        console.log('Not resuming walking for', id, '- state:', { isNewlyAdded, dropped, currentPose });
       }
     }
   }, [conversationState, id, endGlobalConversation, isNewlyAdded, dropped, currentPose]);
@@ -280,6 +266,134 @@ const VillageCharacter = ({ characterData, style, initialXOffset = 0, allCharact
     }
   }, [allCharacters, myIndex, x, verticalOffset, direction, isWalking, conversationState]);
 
+  // Function to generate a random conversation message
+  const generateMessage = (character, isInitiator) => {
+    // Level 1: Extroverted, Sensing - Very casual, emoji-heavy
+    const level1 = [
+      "Hi hi! 🌟 🎵",
+      "Yay! ✨ 🎈",
+      "Woohoo! 🎉 💫",
+      "La la la~ 🌈 ⭐",
+      "Hehe! 🌸 💝",
+      "Look! 🦋 🌺",
+      "Dancing! 🎵 💃",
+      "Sunshine! 🌞 🌈",
+      "Fun time! 🎪 🎠",
+      "Pretty! 🎨 🎭"
+    ];
+
+    // Level 2: Extroverted, Intuitive - Playful with some depth
+    const level2 = [
+      "Wow! 🤔 ✨",
+      "Cool! 💭 🌟",
+      "Really? 🎯 💫",
+      "Fun! 🎪 ⭐",
+      "Amazing! 🌈 💝",
+      "Let's play! 🎮 🎲",
+      "Dance time! 💃 🕺",
+      "Party! 🎉 🎊",
+      "Adventure awaits! 🗺️ 🎯",
+      "Magic happens! ✨ 🔮"
+    ];
+
+    // Level 3: Introverted, Sensing - Thoughtful conversations
+    const level3 = [
+      "Tell me your thoughts? 🤔",
+      "What do you think? 💭",
+      "Share your story? 📖",
+      "How are you feeling? 💫",
+      "Let's talk more! 💝",
+      "That's interesting! 💫",
+      "I understand! 🤝",
+      "Please continue! 👂",
+      "Makes sense! 💡",
+      "You're right! ⭐"
+    ];
+
+    // Level 4: Introverted, Intuitive - Deep but conversational
+    const level4 = [
+      "Life is beautiful! 🌟",
+      "Dreams inspire us! 💫",
+      "Found inner peace? ✨",
+      "Let's explore together! 🌈",
+      "Share your wisdom! 📚",
+      "What's your dream? 🌌",
+      "Tell me more! 💫",
+      "That's deep! ✨",
+      "I feel that! 💝",
+      "You inspire me! 💫"
+    ];
+
+    // Level 5: INTJ/INFJ - Philosophical but accessible
+    const level5 = [
+      "Mind meets heart! 🧠💝",
+      "Wisdom flows freely! 📚✨",
+      "Paths cross perfectly! 🌟",
+      "Thoughts become reality! 💫",
+      "Souls connect here! 💫",
+      "Shall we discover? 🔮",
+      "Journey continues! ✨",
+      "Growing together! 🌱",
+      "Ideas bloom! 🌸",
+      "Truth shines bright! ✨"
+    ];
+
+    // Enhanced personality-based level determination
+    const determineLevel = (char) => {
+      const personalityTraits = char.mbti || '';
+      let score = 0;
+
+      // Introversion adds deep thinking (0-3 points)
+      score += personalityTraits.includes('I') ? 3 : 0;
+
+      // Intuition adds abstract thinking (0-3 points)
+      score += personalityTraits.includes('N') ? 3 : 0;
+
+      // Thinking adds logical depth (0-2 points)
+      score += personalityTraits.includes('T') ? 2 : 0;
+
+      // Judging adds structure (0-1 point)
+      score += personalityTraits.includes('J') ? 1 : 0;
+
+      // Random factor (0-2 points)
+      score += Math.floor(Math.random() * 3);
+
+      // Determine level based on total score
+      if (score >= 8) return 5;      // INTJ/INFJ territory
+      if (score >= 6) return 4;      // IN** types
+      if (score >= 4) return 3;      // I*** or *N** types
+      if (score >= 2) return 2;      // Mixed types
+      return 1;                      // E*** types
+    };
+
+    const level = determineLevel(character);
+    
+    // Get the appropriate message array based on level
+    let messageArray;
+    switch(level) {
+      case 5: messageArray = level5; break;
+      case 4: messageArray = level4; break;
+      case 3: messageArray = level3; break;
+      case 2: messageArray = level2; break;
+      default: messageArray = level1;
+    }
+
+    // Sometimes use pure emoji responses for introverted types
+    if (character.mbti?.includes('I') && Math.random() < 0.3) {
+      const emojiOnlyResponses = [
+        "🤔 💭 ✨",
+        "💫 🌟 💝",
+        "✨ 📚 💫",
+        "🧠 💡 ⭐",
+        "🔮 💫 🌸"
+      ];
+      return emojiOnlyResponses[Math.floor(Math.random() * emojiOnlyResponses.length)];
+    }
+
+    // Return a single random message from the appropriate level
+    return messageArray[Math.floor(Math.random() * messageArray.length)];
+  };
+
   // Function to check for face-to-face encounters
   const checkForEncounters = (others) => {
     const myPosition = { x, verticalOffset, direction };
@@ -316,11 +430,47 @@ const VillageCharacter = ({ characterData, style, initialXOffset = 0, allCharact
       
       // Only trigger if all conditions are met
       if (onSameTrack && facingEachOther && movingTowardsEachOther && perfectDistance && bothWalking) {
-        // Remove randomness - trigger immediately when conditions are perfectly met
         // Only the character with smaller ID triggers to prevent duplicate conversations
         if (id < otherChar.id) {
-          console.log('Triggering conversation between', id, 'and', otherChar.id);
-          startGlobalConversation(id, otherChar.id);
+          // Generate all messages for the conversation upfront
+          const messages = [];
+          for (let i = 0; i < 4; i++) {
+            const message1 = generateMessage(characterData, true);
+            const message2 = generateMessage(otherChar, false);
+            messages.push({ message1, message2 });
+          }
+          
+          // Start the conversation with the first set of messages
+          startGlobalConversation(id, otherChar.id, messages[0].message1, messages[0].message2);
+          
+          // Show first speech bubble
+          setSpeechBubble(messages[0].message1);
+          
+          let currentExchange = 1;
+          
+          // Set up the conversation sequence
+          const nextExchange = () => {
+            if (currentExchange < 4) {
+              setSpeechBubble(messages[currentExchange].message1);
+              currentExchange++;
+              
+              // Schedule next exchange
+              conversationTimeoutRef.current = setTimeout(nextExchange, 3000);
+            } else {
+              // End conversation
+              endGlobalConversation(id, otherChar.id);
+              setSpeechBubble('');
+              
+              // Add to cooldown
+              conversationCooldownRef.current.add(otherChar.id);
+              setTimeout(() => {
+                conversationCooldownRef.current.delete(otherChar.id);
+              }, 30000); // 30 second cooldown
+            }
+          };
+          
+          // Start the exchange sequence
+          conversationTimeoutRef.current = setTimeout(nextExchange, 3000);
         }
       }
     });
@@ -412,6 +562,35 @@ const VillageCharacter = ({ characterData, style, initialXOffset = 0, allCharact
 //       <div>direction: {direction === 1 ? 'right' : 'left'}</div>
 //     </div>
 //   );
+
+  // Function to handle character encounters
+  const handleEncounter = (otherCharacter) => {
+    if (
+      !conversationState?.isInConversation &&
+      !otherCharacter.conversationState?.isInConversation &&
+      !conversationCooldownRef.current.has(otherCharacter.id)
+    ) {
+      const message1 = generateMessage(characterData, true);
+      const message2 = generateMessage(otherCharacter, false);
+      
+      startGlobalConversation(characterData.id, otherCharacter.id, message1, message2);
+      
+      // Show speech bubbles
+      setSpeechBubble(message1);
+      
+      // Clear conversation after a delay
+      conversationTimeoutRef.current = setTimeout(() => {
+        endGlobalConversation(characterData.id, otherCharacter.id);
+        setSpeechBubble('');
+        
+        // Add to cooldown
+        conversationCooldownRef.current.add(otherCharacter.id);
+        setTimeout(() => {
+          conversationCooldownRef.current.delete(otherCharacter.id);
+        }, 30000); // 30 second cooldown
+      }, 5000);
+    }
+  };
 
   return (
     <>
