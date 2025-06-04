@@ -1,0 +1,178 @@
+@import url("https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&display=swap");
+
+/* Base styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  image-rendering: pixelated;
+}
+
+html,
+body {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  font-family: "Silkscreen", cursive;
+}
+
+#root {
+  height: 100%;
+  width: 100%;
+}
+
+/* Fullscreen layout class used across pages */
+.fullscreen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+/* Title styling */
+.title {
+  font-size: 3.5rem;
+  margin-bottom: 2rem;
+  color: white;
+  text-shadow: 2px 2px 0 #000, -2px -2px 0 #000, 2px -2px 0 #000,
+    -2px 2px 0 #000;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+/* Pixel art button styling */
+.pixel-button {
+  background-color: #ffd700;
+  color: black;
+  border: 3px solid black;
+  padding: 10px 20px;
+  border-radius: 10px;
+  font-family: "Silkscreen", cursive;
+  font-size: 1rem;
+  text-decoration: none;
+  text-transform: uppercase;
+  display: inline-block;
+  box-shadow: 3px 3px 0 #000;
+  transform: translateY(0);
+  transition: transform 0.1s, box-shadow 0.1s;
+  cursor: pointer;
+  text-align: center;
+}
+
+.pixel-button:hover {
+  background-color: #ffe44d;
+}
+
+.pixel-button:active {
+  transform: translateY(3px);
+  box-shadow: 0px 0px 0 #000;
+}
+
+/* Start button specific styling */
+.start-button {
+  padding: 12px 32px;
+  font-size: 1.2rem;
+  border-radius: 25px;
+}
+
+/* Container for centered content */
+.content-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+}
+
+/* Character creation page styles */
+.character-container {
+  background-color: rgba(255, 255, 255, 0.9);
+  padding: 2rem;
+  border-radius: 10px;
+  border: 4px solid black;
+  width: 90%;
+  max-width: 600px;
+  box-shadow: 5px 5px 0 rgba(0, 0, 0, 0.5);
+}
+
+.character-container h1 {
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+/* Form elements */
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-size: 0.8rem;
+}
+
+input[type="text"] {
+  width: 100%;
+  padding: 0.5rem;
+  border: 3px solid black;
+  border-radius: 5px;
+  font-family: "Press Start 2P", cursive;
+  font-size: 0.8rem;
+}
+
+/* Emoji selection */
+.emoji-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.emoji-option {
+  font-size: 2rem;
+  padding: 10px;
+  border: 2px solid black;
+  border-radius: 8px;
+  background: white;
+  cursor: pointer;
+}
+
+.emoji-option.selected {
+  background-color: #ffd700;
+  transform: scale(1.1);
+}
+
+/* Navigation between pages */
+.nav-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 2rem;
+  width: 100%;
+}
+
+/* Village styles (for next page) */
+.village-container {
+  padding: 1rem;
+  overflow-y: auto;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .title {
+    font-size: 2.5rem;
+  }
+
+  .pixel-button {
+    padding: 8px 16px;
+    font-size: 0.8rem;
+  }
+}
